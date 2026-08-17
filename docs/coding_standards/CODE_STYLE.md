@@ -481,7 +481,7 @@ Recommended `.vscode/settings.json`:
 
 ## Related Documentation
 
-- [TDD_WORKFLOW.md](TDD_WORKFLOW.md) - Test-driven development cycle
+- [AGENTS.md](../../AGENTS.md) - Enforced test-driven development cycle
 - [QUALITY_GATES.md](QUALITY_GATES.md) - Quality checklist
-- [GIT_WORKFLOW.md](GIT_WORKFLOW.md) - Branching and commit conventions
+- [AGENTS.md](../../AGENTS.md) - Branching, commit, and PhaseGate workflow conventions
 - [../architecture/CORE_PRINCIPLES.md](../architecture/CORE_PRINCIPLES.md) - System design philosophy

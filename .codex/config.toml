@@ -1,0 +1,18 @@
+[mcp_servers.phase_gate_s1mpletrader]
+command = "D:/1Voudig/99_Programming/ST/.venv/Scripts/python.exe"
+args = ["-m", "mcp_server.core.proxy"]
+cwd = "D:/1Voudig/99_Programming/ST"
+startup_timeout_sec = 30
+tool_timeout_sec = 120
+enabled = true
+required = true
+env_vars = ["GITHUB_TOKEN"]
+
+[mcp_servers.phase_gate_s1mpletrader.env]
+PYTHONPATH = "D:/1Voudig/99_Programming/ST"
+LOG_LEVEL = "INFO"
+PGMCP_SERVER_NAME = "phase-gate-s1mpletrader"
+PGMCP_WORKSPACE_ROOT = "D:/1Voudig/99_Programming/ST"
+PGMCP_SERVER_PROJECT_DIR = ".pgmcp"
+GITHUB_OWNER = "MikeyVK"
+GITHUB_REPO = "S1mpleTrader"
