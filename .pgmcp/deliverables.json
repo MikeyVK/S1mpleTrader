@@ -16,6 +16,23 @@
       "skip_reason": null,
       "parent_branch": "main",
       "created_at": "2026-08-17T10:07:19.223980+00:00"
+    },
+    "2": {
+      "issue_title": "Align pgmcp v2 configuration and GitHub taxonomy with S1mpleTrader",
+      "workflow_name": "feature",
+      "execution_mode": "interactive",
+      "required_phases": [
+        "research",
+        "design",
+        "planning",
+        "implementation",
+        "validation",
+        "documentation",
+        "ready"
+      ],
+      "skip_reason": null,
+      "parent_branch": "epic/1-development-control-plane",
+      "created_at": "2026-08-17T11:05:14.643153+00:00"
     }
   }
 }
