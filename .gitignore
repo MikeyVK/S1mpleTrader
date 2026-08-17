@@ -1,1 +1,5 @@
 .venv/
+
+# pgmcp runtime output and ephemeral scaffold artifacts
+.pgmcp/logs/
+.pgmcp/temp/

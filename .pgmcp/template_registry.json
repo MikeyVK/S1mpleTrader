@@ -1,0 +1,19 @@
+{
+  "version": "1.0",
+  "version_hashes": {
+    "8dd42510": {
+      "artifact_type": "issue",
+      "created": "2026-08-17T09:46:11.822581+00:00",
+      "hash_algorithm": "SHA256",
+      "concrete": {
+        "template_id": "issue.md",
+        "version": "1.0.0"
+      }
+    }
+  },
+  "current_versions": {
+    "issue": "8dd42510"
+  },
+  "templates": {},
+  "last_updated": "2026-08-17T09:46:11.822581+00:00"
+}
