@@ -787,7 +787,7 @@ Create a new label in the repository. Validates against `LabelConfig` patterns.
 
 #### Behavior Notes
 
-- **LabelConfig Validation:** Validates name against patterns in [.pgmcp/labels.yaml](../../../../.pgmcp/labels.yaml)
+- **LabelConfig Validation:** Validates name against patterns in [.pgmcp/config/labels.yaml](../../../../.pgmcp/config/labels.yaml)
 - **Duplicate Check:** Returns error if label already exists
 - **Color Format:** Must be 6-character hex WITHOUT `#` (validated by Pydantic)
 
@@ -1135,19 +1135,18 @@ All GitHub tools fully support Unicode content including emojis, non-ASCII chara
 
 ### .pgmcp/labels.yaml
 
-Labels created via `create_label` are validated against patterns in [.pgmcp/labels.yaml](../../../../.pgmcp/labels.yaml):
+Labels created via `create_label` are validated against [`.pgmcp/config/labels.yaml`](../../../../.pgmcp/config/labels.yaml):
 
 ```yaml
-# Labels are defined in .pgmcp/config/labels.yaml
-# See the file for the full list — key categories:
+# See .pgmcp/config/labels.yaml for the complete configuration.
 #
 # labels:              # Named labels (type:*, priority:*, scope:*)
 # label_patterns:      # Regex patterns for dynamic labels (parent:NNN, phase:SLUG)
-# freeform_exceptions: # Labels exempt from pattern validation
+# freeform_exceptions: # Explicit GitHub default labels exempt from category validation
 ```
 
-**Freeform Exception:**
-Labels matching `freeform-*` pattern bypass pattern validation.
+**Freeform exceptions:**
+Only the explicit names listed under `freeform_exceptions` bypass project category and pattern validation. They are GitHub default labels retained for their standard repository workflow meaning; no `freeform-*` wildcard is supported. See GitHub's [Managing labels](https://docs.github.com/en/issues/using-labels-and-milestones-to-track-work/managing-labels) documentation.
 
 ---
 

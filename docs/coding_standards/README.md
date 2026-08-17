@@ -57,7 +57,7 @@ The 7 mandatory quality gates that all code must pass.
 - Gate 5: Tests passing (100%)
 - Post-implementation workflow
 - Bulk quality checks
-- pyrightconfig.json configuration
+- Pyright configuration status and issue #3/#4 ownership
 - Known acceptable warnings (Pydantic limitations)
 - Code review rejection criteria
 
@@ -150,7 +150,7 @@ Comprehensive style guide for Python code in PhaseGate MCP.
 ### Setting Up New Workspace
 
 1. **VS Code settings:** [CODE_STYLE.md](CODE_STYLE.md) - Recommended config
-2. **pyrightconfig.json:** [QUALITY_GATES.md](QUALITY_GATES.md) - Type checking
+2. **Pyright:** [QUALITY_GATES.md](QUALITY_GATES.md) - Current configuration status and issue #3/#4 ownership
 3. **Auto-fix setup:** [QUALITY_GATES.md](QUALITY_GATES.md) - Whitespace commands
 4. **Git hooks (optional):** Pre-commit quality checks
 
@@ -166,12 +166,13 @@ All code must meet these standards before merge:
 | 3 | Line Length | Pass | `ruff check --isolated --select=E501` (max 100 chars) |
 | 4 | Type Checking | 0 errors | `mypy --strict` (DTOs only: `backend/dtos/**/*.py`) |
 | 5 | Tests Passing | 100% | `pytest` |
-| 6 | Code Coverage | >= 90% | `pytest --cov=backend --cov=mcp_server --cov-branch --cov-fail-under=90` |
+| 6 | Code Coverage | Pending issue #4 | Quality-gate and CI policy not yet established |
 
 **Configuration Doctrine:**
-- **`pyproject.toml`** = IDE baseline (pragmatic, for VS Code/PyCharm)
-- **`.pgmcp/quality.yaml`** = CI authority (strict, gates use `--isolated`)
-- See [QUALITY_GATES.md](QUALITY_GATES.md) for complete details and exact commands
+- **`pyproject.toml`** defines the current package and pytest discovery baseline.
+- **`.pgmcp/config/quality.yaml`** defines local pgmcp quality-gate selection.
+- Issue #3 owns reproducible tool availability; issue #4 owns authoritative quality and CI policy.
+- See [QUALITY_GATES.md](QUALITY_GATES.md) for the current boundaries.
 
 ## Key Principles
 
@@ -183,36 +184,28 @@ All code must meet these standards before merge:
 6. **Documentation** - Module headers, concise docstrings
 7. **No Shortcuts** - Quality is non-negotiable
 
-## Test File Placement (Guardrail — Issue #247)
-
-> **Violation of this rule caused Issue #247 (169 test files scattered across `tests/`).**
+## Test File Placement
 
 | Source module | Test destination |
 |---|---|
-| `mcp_server/**` | `tests/mcp_server/unit/<mirror-path>/` |
-| `mcp_server/**` (E2E) | `tests/mcp_server/integration/` |
 | `backend/**` | `tests/backend/<mirror-path>/` |
-| **❌ NEVER** | `tests/*.py` root or `tests/unit/` |
+| **Never** | Test files directly under `tests/` |
 
-**Enforcement:**
-- `base_path` in `.pgmcp/artifacts.yaml` for `unit_test` → `tests/mcp_server/unit/`
-- `base_path` in `.pgmcp/artifacts.yaml` for `integration_test` → `tests/mcp_server/integration/`
-- For backend code, override via `output_path="tests/backend/..."` in `scaffold_artifact`
-- `pytest` zonder args = enkel `tests/mcp_server/` (via `testpaths` in `pyproject.toml`)
-- `pytest tests/backend/` = explicit backend run
+**Configuration:**
+- `.pgmcp/templates/config/unit_test.yaml` uses `tests/backend/` as its base path.
+- `.pgmcp/templates/config/integration_test.yaml` uses `tests/backend/` as its base path.
+- `pyproject.toml` defines `tests/backend` as the default pytest discovery root.
+- Issue #2 changes configuration only; it does not create, modify, remove, or reorganize tests or fixtures.
+- Issue #3 owns reproducible test-tool installation; issue #4 owns test and CI policy.
 
 **Scaffolding:**
 ```python
-# MCP server unit test (default base_path werkt automatisch)
-scaffold_artifact(artifact_type="unit_test", name="TestMyTool", context={...})
-# → tests/mcp_server/unit/test_my_tool.py
-
-# Backend unit test (output_path verplicht)
 scaffold_artifact(
-    artifact_type="unit_test", name="TestMyWorker",
-    output_path="tests/backend/workers/test_my_worker.py",
-    context={...}
+    artifact_type="unit_test",
+    name="TestMyWorker",
+    context={...},
 )
+# Output is rooted under tests/backend/ by the unit-test template configuration.
 ```
 
 ## Historical Context

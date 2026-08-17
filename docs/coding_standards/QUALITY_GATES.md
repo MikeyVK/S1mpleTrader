@@ -22,7 +22,7 @@ All code must pass **8 mandatory quality gates** before merging to main. Each ga
    - Final arbiter for pull request approval
 
 3. **Gates apply to production AND test code**
-   - All Python files in `backend/`, `mcp_server/`, and `tests/` must pass
+   - Project selection covers Python files in `backend/` and `tests/backend/`
    - Tests held to same quality bar as production code
 
 4. **Ruff `--isolated` mode in CI**
@@ -51,7 +51,7 @@ Every DTO implementation must pass all gates for **both** the DTO file and its t
 ```powershell
 # Check formatting (no changes written)
 python -m ruff format --isolated --check --diff --line-length=100 backend/dtos/strategy/my_dto.py
-python -m ruff format --isolated --check --diff --line-length=100 tests/unit/dtos/strategy/test_my_dto.py
+python -m ruff format --isolated --check --diff --line-length=100 tests/backend/dtos/strategy/test_my_dto.py
 
 # Apply formatting (writes changes)
 python -m ruff format --isolated --line-length=100 backend/dtos/strategy/my_dto.py
@@ -181,28 +181,10 @@ pytest tests/unit/dtos/strategy/test_my_dto.py -q --tb=line
 
 ### Gate 6: Code Coverage
 
-**Purpose:** Ensure comprehensive test coverage with branch coverage >= 90%.
-
-```powershell
-# Check coverage for backend and mcp_server packages
-pytest tests/ --cov=backend --cov=mcp_server --cov-branch --cov-fail-under=90 --tb=short
-```
-
-**Expected:** Branch coverage >= 90% (hard fail below threshold)
-
-**Scope:** Production packages only:
-- `backend/` - Core trading logic
-- `mcp_server/` - MCP server implementation
-
-**Why separate from Gate 5?**
-- **Gate 5:** Validates test correctness (do tests pass?)
-- **Gate 6:** Validates test thoroughness (are all code paths tested?)
-- Follows Single Responsibility Principle - each gate checks one aspect
-
-**Adding new packages:** When adding new production Python packages, extend Gate 6 scope:
-```powershell
-pytest tests/ --cov=backend --cov=mcp_server --cov=new_package --cov-branch --cov-fail-under=90
-```
+Coverage policy and CI execution are not established by the issue #2 configuration alignment.
+Issue #3 owns the reproducible development environment and required tool availability. Issue #4
+owns quality-gate policy, coverage thresholds, and CI execution. Until those issues are completed,
+missing tooling or configuration must be reported transparently rather than treated as success.
 
 ## Post-Implementation Workflow
 
@@ -248,7 +230,7 @@ python -m mypy backend/dtos/strategy/my_dto.py --strict --no-error-summary
 pytest tests/unit/dtos/strategy/test_my_dto.py -q --tb=line
 
 # Step 5: Run coverage (entire test suite with branch coverage)
-pytest tests/ --cov=backend --cov=mcp_server --cov-branch --cov-fail-under=90 --tb=short
+# Coverage command and threshold are defined by issue #4.
 ```
 
 ## Bulk Quality Checks
@@ -265,27 +247,13 @@ git diff --name-only | Where-Object { $_ -like "*.py" } | ForEach-Object {
 }
 ```
 
-## pyrightconfig.json Configuration
+## Pyright Project Configuration
 
-Project uses `pyrightconfig.json` for consistent type checking:
-
-```json
-{
-  "pythonVersion": "3.13",
-  "typeCheckingMode": "basic",
-  "reportUnknownMemberType": false,
-  "reportUnknownVariableType": false,
-  "reportCallIssue": false,
-  "reportArgumentType": false,
-  "reportAttributeAccessIssue": false
-}
-```
-
-**Rationale:**
-- **Python 3.13 target** - Project language version
-- **Basic mode** - Pragmatic balance (not overly strict)
-- **Disabled checks** - Suppress Pydantic-specific false positives
-- **Enabled checks** - Unused imports, duplicate imports, undefined variables
+`.pgmcp/config/quality.yaml` currently references `pyrightconfig.json`, but that file is not present
+in this repository. Issue #2 aligns project file selection only; it does not invent interpreter,
+strictness, dependency, or CI policy. Issue #3 owns reproducible tool availability and issue #4
+owns the authoritative quality-gate and CI configuration. Until then, the missing configuration
+must remain a visible validation failure rather than being masked.
 
 ## Known Acceptable Warnings
 
@@ -333,20 +301,10 @@ assert getattr(dt, "tzinfo") is not None
 
 ### 3. Pydantic Optional Fields
 
-**Issue:** `Field(None, ...)` triggers "missing parameter" warnings
-
-**Root cause:** Pylance doesn't recognize `Field(None, default=None)` pattern
-
-**Fix:** Already suppressed globally via `pyrightconfig.json`:
-```json
-{
-  "reportCallIssue": false,
-  "reportArgumentType": false,
-  "reportAttributeAccessIssue": false
-}
-```
-
-**Status:** Systematically suppressed at workspace level - no action needed.
+Follow [TYPE_CHECKING_PLAYBOOK.md](TYPE_CHECKING_PLAYBOOK.md) when Pyright reports optional-field
+errors. Do not claim or add workspace-wide suppressions: no `pyrightconfig.json` is currently
+present, and issue #2 does not decide global type-checking policy. Environment and quality-policy
+work remains assigned to issues #3 and #4.
 
 ### 4. Pytest Fixture Redefined Names (W0621)
 
@@ -377,42 +335,12 @@ def _artifact_manager(
 **Status:** Use this pattern for all fixtures that inject other fixtures as parameters.
 
 
-### 5. Integration Test Boundary Contract
+### 5. Test Discovery Boundary
 
-Integration tests in `tests/mcp_server/integration/` are part of the **default test suite** and run with every `pytest tests/mcp_server` invocation. The following contract must hold to keep the full suite safe and side-effect-free.
-
-**What "integration" means in this codebase:**
-
-| Characteristic | Rule |
-|---|---|
-| External API adapter | Always mocked (`MagicMock` or `MagicMock(spec=...)`) |
-| Filesystem writes | Exclusively via `tmp_path` (pytest fixture) |
-| Real workspace reads | Permitted for read-only operations (e.g. `ruff`/`mypy` on a real source file) |
-| Network calls | Never — zero real HTTP/GitHub API traffic |
-| Side effects outside `tmp_path` | Not allowed — test must be fully reversible |
-| Environment variable guards | Not needed — the adapter boundary is the safety layer |
-
-Integration tests exercise multiple real layers simultaneously (e.g. tool + manager + config) while mocking the external boundary. They are not slower-running tests requiring an opt-in flag; they are hermetic tests with a wider internal scope.
-
-**Boundary enforcement:**
-
-The `test_pytest_config.py` suite actively guards these invariants:
-
-- `testpaths = ["tests/mcp_server"]` — backend tests never run implicitly
-- No `-m not integration` filter — the integration marker is intentionally abolished (merged via #237)
-- `integration` marker not defined in `pyproject.toml` — not needed because the adapter boundary provides safety, not a marker
-- `asyncio_mode = "strict"` — async tests pay no event-loop overhead unless marked
-- `pytest-xdist` enabled via `-n auto` — parallel execution requires `tmp_path` isolation
-
-**Writing a new integration test — checklist:**
-
-- [ ] File lives in `tests/mcp_server/integration/`
-- [ ] Module docstring includes `@layer: Tests (Integration)`
-- [ ] External API adapter replaced with `MagicMock` or `MagicMock(spec=AdapterClass)`
-- [ ] All filesystem writes via `tmp_path` — never writes to the real workspace
-- [ ] No env-gated or opt-in skip guard (no `pytest.mark.skipif(os.getenv(...))` or `pytest.skip` conditioned on an environment variable)
-- [ ] No `subprocess.run` targeting remote services — local git ops on `tmp_path` are fine
-- [ ] Compatible with `pytest-xdist` parallel execution (no shared mutable state between test functions)
+`pyproject.toml` defines `tests/backend` as the current default pytest discovery root. This
+configuration-only issue does not create, modify, remove, or reorganize pytest files and does not
+introduce fixtures or a new integration-test policy. Reproducible test-tool installation belongs
+to issue #3; test and CI policy belongs to issue #4.
 
 ## Code Review Rejection Criteria
 

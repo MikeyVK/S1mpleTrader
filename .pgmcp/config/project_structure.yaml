@@ -17,6 +17,18 @@ directories:
     require_scaffold_for:
       - "**/*.py"  # All Python files in backend must be scaffolded
 
+  backend/assembly:
+    parent: backend
+    description: "Application assembly"
+
+  backend/config:
+    parent: backend
+    description: "Application configuration"
+
+  backend/core:
+    parent: backend
+    description: "Platform core"
+
   backend/dtos:
     parent: backend
     description: "Data Transfer Objects"
@@ -25,99 +37,36 @@ directories:
     # Inherits allowed_extensions from parent (implicit)
     # Inherits require_scaffold_for from parent (cumulative)
 
-  backend/workers:
-    parent: backend
-    description: "Domain operation workers"
-    allowed_artifact_types:
-      - worker
-
-  backend/adapters:
-    parent: backend
-    description: "External system adapters"
-    allowed_artifact_types: []  # DISABLED (issue #325)
-
-  backend/interfaces:
-    parent: backend
-    description: "Abstract protocol definitions"
-    allowed_artifact_types: []  # DISABLED (issue #325)
-
   backend/services:
     parent: backend
     description: "Orchestration and business logic"
     allowed_artifact_types:
       - service
 
-  mcp_server:
-    parent: null
-    description: "MCP platform code"
-    allowed_artifact_types:
-      - tool
-      - schema
-      - generic
-    allowed_extensions:
-      - ".py"
-    require_scaffold_for:
-      - "tools/**/*.py"
-      - "resources/**/*.py"
+  backend/utils:
+    parent: backend
+    description: "Shared utilities"
 
-  mcp_server/tools:
-    parent: mcp_server
-    description: "MCP tool implementations"
+  backend/workers:
+    parent: backend
+    description: "Domain operation workers"
     allowed_artifact_types:
-      - tool
-
-  mcp_server/resources:
-    parent: mcp_server
-    description: "MCP resource providers"
-    allowed_artifact_types: []  # DISABLED (issue #325)
-
-  mcp_server/schemas:
-    parent: mcp_server
-    description: "Pydantic validation schemas"
-    allowed_artifact_types:
-      - schema
+      - worker
 
   tests:
     parent: null
     description: "Test suite root — NO test files here directly"
-    allowed_artifact_types: []  # Tests must go in tests/mcp_server/ or tests/backend/
-    allowed_extensions:
-      - ".py"
-    require_scaffold_for: []
-
-  tests/mcp_server:
-    parent: tests
-    description: "MCP server test suite (default discovery via testpaths in pyproject.toml)"
-    allowed_artifact_types:
-      - unit_test
-      - integration_test
-    allowed_extensions:
-      - ".py"
-    require_scaffold_for: []
-
-  tests/mcp_server/unit:
-    parent: tests/mcp_server
-    description: "MCP unit tests — no real I/O, no fixtures from tests/backend/"
-    allowed_artifact_types:
-      - unit_test
-    allowed_extensions:
-      - ".py"
-    require_scaffold_for: []
-
-  tests/mcp_server/integration:
-    parent: tests/mcp_server
-    description: "MCP integration / E2E tests — marked @integration, excluded from default run"
-    allowed_artifact_types:
-      - integration_test
+    allowed_artifact_types: []  # Tests must go in tests/backend/
     allowed_extensions:
       - ".py"
     require_scaffold_for: []
 
   tests/backend:
     parent: tests
-    description: "Backend unit tests — pure Python, no MCP imports"
+    description: "Backend test suite (default discovery via testpaths in pyproject.toml)"
     allowed_artifact_types:
       - unit_test
+      - integration_test
     allowed_extensions:
       - ".py"
     require_scaffold_for: []

@@ -5,7 +5,7 @@ context_schema:
   module_under_test:
     type: string
     title: Module Under Test
-    description: Fully qualified module path (e.g. 'mcp_server.schemas.contexts.dto')
+    description: Fully qualified module path (e.g. 'backend.dtos.product')
     required: true
   test_class_name:
     type: string
@@ -67,7 +67,7 @@ name_suffix: null
 file_extension: .py
 generate_test: false
 strict_validation: true
-base_path: tests/mcp_server/unit/
+base_path: tests/backend/
 state_machine:
   states:
   - CREATED

@@ -47,7 +47,7 @@ name_suffix: null
 file_extension: .py
 generate_test: false
 strict_validation: true
-base_path: tests/mcp_server/integration/
+base_path: tests/backend/
 state_machine:
   states:
   - CREATED

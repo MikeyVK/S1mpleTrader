@@ -1,11 +1,13 @@
 version: "1.0.0"
 
+# GitHub default labels that remain valid outside the project category taxonomy.
+# Source: https://docs.github.com/en/issues/using-labels-and-milestones-to-track-work/managing-labels
 freeform_exceptions:
-  - "good first issue"
-  - "help wanted"
-  - "wontfix"
-  - "duplicate"
-  - "invalid"
+  - "good first issue"  # Suitable for first-time contributors.
+  - "help wanted"       # A maintainer is requesting help.
+  - "wontfix"           # Work will not continue.
+  - "duplicate"         # Similar work already exists.
+  - "invalid"           # The item is no longer relevant.
 
 # Dynamic label patterns - validated but not pre-created
 # These labels are created on-demand when needed
@@ -81,10 +83,6 @@ labels:
   - name: "scope:architecture"
     color: "BFD4F2"
     description: "Architectural changes"
-  
-  - name: "scope:mcp-server"
-    color: "BFD4F2"
-    description: "MCP server internals"
   
   - name: "scope:platform"
     color: "BFD4F2"
