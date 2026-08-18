@@ -27,13 +27,23 @@
         "template_id": "validation_report.md",
         "version": "1.0.0"
       }
+    },
+    "93bb9b4e": {
+      "artifact_type": "pr",
+      "created": "2026-08-18T06:57:07.821128+00:00",
+      "hash_algorithm": "SHA256",
+      "concrete": {
+        "template_id": "pr.md",
+        "version": "1.0.0"
+      }
     }
   },
   "current_versions": {
     "issue": "8dd42510",
     "research": "8b7bb3ab",
-    "validation_report": "fe38a66d"
+    "validation_report": "fe38a66d",
+    "pr": "93bb9b4e"
   },
   "templates": {},
-  "last_updated": "2026-08-18T06:11:21.126656+00:00"
+  "last_updated": "2026-08-18T06:57:07.821128+00:00"
 }
