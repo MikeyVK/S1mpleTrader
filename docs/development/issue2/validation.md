@@ -3,7 +3,7 @@
 # Issue #2 Validation Report
 
 **Status:** DEFINITIVE  
-**Version:** 1.0  
+**Version:** 1.1  
 **Last Updated:** 2026-08-18  
 **Validation Outcome:** FAIL  
 **Issue:** #2  
@@ -69,6 +69,46 @@ There is no trading-runtime demonstration because issue #2 changes only the deve
 
 These limitations are planned follow-up work and were not suppressed or repaired under issue #2.
 
+### CO Triage — Lightweight Chore Workflow for Codex
+
+**Proposed issue:** `Port and harden the lightweight chore workflow for S1mpleTrader`
+
+Issue #2 demonstrated that the full feature workflow is disproportionate for mechanical configuration,
+template, documentation, and GitHub-metadata changes. Codex followed the configured phase instructions
+correctly; the overwork came from applying feature-level research, cycle-based TDD, full validation,
+and documentation reconciliation to a non-behavioral maintenance change.
+
+Coordination should triage a first-class `chore` workflow without adding another classification
+dimension. The workflow type remains the single source for phase order and execution behavior.
+
+Proposed contract:
+
+- phases: `research → implementation → ready`;
+- compact research with a checklist and Approved Strategy;
+- `implementation.cycle_based: false`;
+- changed-file quality gates;
+- tests only when executable behavior changes;
+- no mandatory validation or documentation phase for configuration-only maintenance;
+- Ready must scaffold the PR body and transfer delivered scope, deferred work, and tracking state to CO;
+- use YAML anchors or aliases only for contract blocks with exactly identical semantics.
+
+Required S1mpleTrader hardening compared with the ypsia prior art:
+
+- call `run_quality_gates(scope='files', files=[...])` using the current pgmcp tool contract;
+- define test applicability explicitly by changed surface;
+- do not require a Python branch gate when a configuration-only branch legitimately selects zero Python files;
+- retain the existing non-destructive approval and PR-merge boundaries;
+- validate the workflow against issue #2 as a retrospective case and against one behavioral issue as a regression case.
+
+**Tracking state:** CO triage required; no dedicated S1mpleTrader issue exists yet.
+
+References:
+
+- [ypsia chore contract](https://github.com/MikeyVK/ypsia/blob/main/.pgmcp/config/contracts.yaml)
+- [ypsia workflow registry](https://github.com/MikeyVK/ypsia/blob/main/.pgmcp/config/workflows.yaml)
+- [GitHub guidance on YAML anchors and aliases](https://docs.github.com/en/actions/concepts/workflows-and-actions/reusing-workflow-configurations)
+- [OpenAI guidance on lean instructions and explicit autonomy boundaries](https://developers.openai.com/api/docs/guides/latest-model)
+
 ## Evidence
 
 - Tests: `run_tests(scope='full')` → FAIL, pytest unavailable; zero tests collected.
@@ -91,3 +131,4 @@ These limitations are planned follow-up work and were not suppressed or repaired
 | Version | Date | Author | Changes |
 |---|---|---|---|
 | 1.0 | 2026-08-18 | Agent | Record lightweight validation and planned follow-up ownership. |
+| 1.1 | 2026-08-18 | User / Agent | Add referenced chore-workflow optimization as CO-triaged deferred work. |
