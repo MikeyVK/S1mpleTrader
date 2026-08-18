@@ -18,12 +18,22 @@
         "template_id": "research.md",
         "version": "1.3.1"
       }
+    },
+    "fe38a66d": {
+      "artifact_type": "validation_report",
+      "created": "2026-08-18T06:11:21.126656+00:00",
+      "hash_algorithm": "SHA256",
+      "concrete": {
+        "template_id": "validation_report.md",
+        "version": "1.0.0"
+      }
     }
   },
   "current_versions": {
     "issue": "8dd42510",
-    "research": "8b7bb3ab"
+    "research": "8b7bb3ab",
+    "validation_report": "fe38a66d"
   },
   "templates": {},
-  "last_updated": "2026-08-17T10:31:31.298424+00:00"
+  "last_updated": "2026-08-18T06:11:21.126656+00:00"
 }
